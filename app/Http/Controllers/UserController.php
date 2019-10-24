@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\CustomResponse;
+use App\Transformers\UserTransformer;
+use App\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+
+    use CustomResponse;
+
     /**
      * Display a listing of the resource.
      *
@@ -13,18 +19,32 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::all();
+
+        $data = fractal($users, new UserTransformer())->toArray();
+
+        return $this->customData($data, 'users');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
+        //validate request 
+        $data = request()->validate([
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'password' => 'string|min:8',
+        ]);
+
+        $user = User::create($data);
+
+        $data = fractal($user, new UserTransformer())->toArray();
+
+        return $this->customData($data, 'user');
     }
 
     /**
@@ -35,29 +55,12 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
-    }
+        if (is_null($user = User::find($id))) {
+            return $this->notFound('user not found');
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+        $data = fractal($user, new UserTransformer())->toArray();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return $this->customData($data, 'user');
     }
 }
