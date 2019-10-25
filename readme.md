@@ -1,6 +1,6 @@
 ## About UserApi
 
-This is a sample project I used to demostrate how to mock and test PHP Traits. The blog post can be found [here]()
+This is a sample project I used to demostrate how to mock and test PHP Traits. The blog post can be found [here](http://stephenjude.tech/articles/mocking-and-testing-php-traits)
 
 ## Usage
 
